@@ -1,4 +1,4 @@
-import '../sass/main.css';
+import './sass/main.scss';
 
 const debounce = require('lodash.debounce');
 import { error, alert } from '@pnotify/core/dist/PNotify.js';
@@ -8,7 +8,7 @@ import * as basicLightbox from 'basiclightbox'
 import "basiclightbox/dist/basicLightbox.min.css"
 
 import NewApiServises from './apiService.js';
-import photoCardMarcup from '../templates/photo-card.hbs';
+import photoCardMarcup from './partials/photo-card.hbs';
 
 const refs = {
     searchForm: document.querySelector('#search-form'),
@@ -58,28 +58,13 @@ function renderPhotoCard(hits) {
 
     addMarkup(hits);
 
-    // кінець window
+    // end window
     setTimeout(() => {
         window.scrollTo({
             top: document.documentElement.scrollHeight,
             behavior: 'smooth',
         });
     }, 500);
-
-    // const elementScroll = document.querySelectorAll('.gallery_item');
-    // elementScroll[elementScroll.length - 12].scrollIntoView({
-    //     behavior: 'smooth',
-    //     block: 'start',
-    //     alignToTop: true,
-    // });
-
-    // скрол refs.loadMoreBtn
-    // setTimeout(() => {
-    //     refs.loadMoreBtn.scrollIntoView({
-    //         behavior: 'smooth',
-    //         block: 'end',
-    //     });
-    // }, 500);
 
 };
 
