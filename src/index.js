@@ -58,11 +58,11 @@ function renderPhotoCard(hits) {
 
     addMarkup(hits);
 
-    // end window
-    setTimeout(() => {
-        window.scrollTo({
-            top: document.documentElement.scrollHeight,
+
+setTimeout(() => {
+        refs.loadMoreBtn.scrollIntoView({
             behavior: 'smooth',
+            block: 'end',
         });
     }, 500);
 
