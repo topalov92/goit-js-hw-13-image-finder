@@ -1,4 +1,4 @@
-import '../sass/main.scss';
+import '../sass/main.css';
 
 const debounce = require('lodash.debounce');
 import { error, alert } from '@pnotify/core/dist/PNotify.js';
