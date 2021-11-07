@@ -1,4 +1,4 @@
-import './sass/main.scss';
+import '../sass/main.scss';
 
 const debounce = require('lodash.debounce');
 import { error, alert } from '@pnotify/core/dist/PNotify.js';
@@ -8,7 +8,7 @@ import * as basicLightbox from 'basiclightbox'
 import "basiclightbox/dist/basicLightbox.min.css"
 
 import NewApiServises from './apiService.js';
-import photoCardMarcup from '..templates/photo-cards.hbs';
+import photoCardMarcup from '../templates/photo-card.hbs';
 
 const refs = {
     searchForm: document.querySelector('#search-form'),
