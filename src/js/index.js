@@ -1,46 +1,104 @@
-import '../style.css';
-import CountryInfoTpl from '../templates/country-info.hbs';
-import CountryItemstTpl from '../templates/country-items.hbs';
-import API from './fetchCountries';
-import getRefs from './refs';
-import * as _ from "lodash";
+import '../sass/main.scss';
 
-import '@pnotify/core/dist/PNotify.css';
+const debounce = require('lodash.debounce');
+import { error, alert } from '@pnotify/core/dist/PNotify.js';
 import '@pnotify/core/dist/BrightTheme.css';
-import { error } from '@pnotify/core';
+import '@pnotify/core/dist/PNotify.css';
+import * as basicLightbox from 'basiclightbox'
+import "basiclightbox/dist/basicLightbox.min.css"
 
-const refs = getRefs();
+import NewApiServises from './apiService.js';
+import photoCardMarcup from '../templates/photo-card.hbs';
 
-refs.searchInput.addEventListener("input", _.debounce(onInputChange, 500));
-
-function onInputChange(evt) {
-    evt.preventDefault();
-
-const searchQuery = evt.target.value;
-
-API.fetchCountries(searchQuery)
-    .then(renderCountryInfo)
-    .catch(onFetchError)
-    .finally(() => refs.searchInput.value === '');
+const refs = {
+    searchForm: document.querySelector('#search-form'),
+    galleryContainer: document.querySelector('.gallery'),
+    loadMoreBtn: document.querySelector('.load-more-btn'),
 }
 
-function onFetchError() {
-    error({
-    title: false,
-    text: 'No matches found, enter more letters from your country name!',
-    shadow: true,
-    delay: 1000,
-})}
+const NewsApiServises = new NewApiServises();
 
-function renderCountryInfo(country) {
-    refs.countryInfo.innerHTML = '';
-    if(country.length === 1) {
-    const countryMurkup = CountryInfoTpl(country);
-    refs.countryInfo.innerHTML = countryMurkup;
-    } else if (country.length > 1 && country.length < 8) {
-        const murkupCountries = CountryItemstTpl (country);
-        refs.countryInfo.innerHTML = murkupCountries;
-    } else {
-        onFetchError();
+refs.searchForm.addEventListener('input', debounce(onInputSearchPhoto, 500));
+refs.loadMoreBtn.addEventListener('click', onLoadMore);
+refs.galleryContainer.addEventListener('click', onClickBigImg);
+
+
+
+function onInputSearchPhoto(event) {
+    const inputValue = event.target.value;
+
+
+    cleareGallaryContainer();
+    NewApiServises.query = inputValue;
+
+    if (NewApiServises.query === '') {
+        refs.loadMoreBtn.classList.add('is-hidden');
+        alert({
+            text: 'Please, enter the text',
+            delay: 1000,
+        });
+        return;
+    };
+
+    NewApiServises.resetPage();
+    NewApiServises.fetchPhoto()
+        .then(renderPhotoCard)
+        .catch(error => console.log(error));
+};
+
+function renderPhotoCard(hits) {
+
+    if (hits.length === 0) {
+        error({
+            text: 'Invalid request',
+            delay: 1000,
+        });
+        return;
     }
+
+    addMarkup(hits);
+
+    // кінець window
+    setTimeout(() => {
+        window.scrollTo({
+            top: document.documentElement.scrollHeight,
+            behavior: 'smooth',
+        });
+    }, 500);
+
+};
+
+function cleareGallaryContainer() {
+    refs.galleryContainer.innerHTML = '';
 }
+
+function addMarkup(element) {
+    refs.galleryContainer.insertAdjacentHTML('beforeend', photoCardMarcup(element));
+    refs.loadMoreBtn.classList.remove('is-hidden');
+};
+
+function onLoadMore(event) {
+    newApiServises.fetchPhoto()
+        .then(renderPhotoCard);
+};
+
+// basicLightbox 
+
+function onClickBigImg(event) {
+    if (event.target.tagName !== 'IMG') return false;
+
+    const imgSrc = event.target.getAttribute('big-src');
+
+    const instance = basicLightbox
+        .create(`<img src="${imgSrc}" width="800" height="600">`)
+
+    instance.show()
+
+    window.addEventListener('click', onClickWindowLightboxClose)
+};
+
+function onClickWindowLightboxClose(event) {
+    if (event.code === 'Escape') {
+        instance.close(() => console.log('lightbox not working'));
+    }
+};
