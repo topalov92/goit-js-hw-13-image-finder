@@ -1,4 +1,4 @@
-import '../sass/main.scss';
+import './sass/main.scss';
 
 const debounce = require('lodash.debounce');
 import { error, alert } from '@pnotify/core/dist/PNotify.js';
@@ -8,7 +8,7 @@ import * as basicLightbox from 'basiclightbox'
 import "basiclightbox/dist/basicLightbox.min.css"
 
 import NewApiServises from './apiService.js';
-import photoCardMarcup from '../templates/photo-card.hbs';
+import photoCardMarcup from '..templates/photo-cards.hbs';
 
 const refs = {
     searchForm: document.querySelector('#search-form'),
@@ -16,7 +16,7 @@ const refs = {
     loadMoreBtn: document.querySelector('.load-more-btn'),
 }
 
-const NewsApiServises = new NewApiServises();
+const newApiServises = new NewApiServises();
 
 refs.searchForm.addEventListener('input', debounce(onInputSearchPhoto, 500));
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
@@ -29,9 +29,9 @@ function onInputSearchPhoto(event) {
 
 
     cleareGallaryContainer();
-    NewApiServises.query = inputValue;
+    newApiServises.query = inputValue;
 
-    if (NewApiServises.query === '') {
+    if (newApiServises.query === '') {
         refs.loadMoreBtn.classList.add('is-hidden');
         alert({
             text: 'Please, enter the text',
@@ -40,8 +40,8 @@ function onInputSearchPhoto(event) {
         return;
     };
 
-    NewApiServises.resetPage();
-    NewApiServises.fetchPhoto()
+    newApiServises.resetPage();
+    newApiServises.fetchPhoto()
         .then(renderPhotoCard)
         .catch(error => console.log(error));
 };
@@ -65,6 +65,21 @@ function renderPhotoCard(hits) {
             behavior: 'smooth',
         });
     }, 500);
+
+    // const elementScroll = document.querySelectorAll('.gallery_item');
+    // elementScroll[elementScroll.length - 12].scrollIntoView({
+    //     behavior: 'smooth',
+    //     block: 'start',
+    //     alignToTop: true,
+    // });
+
+    // скрол refs.loadMoreBtn
+    // setTimeout(() => {
+    //     refs.loadMoreBtn.scrollIntoView({
+    //         behavior: 'smooth',
+    //         block: 'end',
+    //     });
+    // }, 500);
 
 };
 
